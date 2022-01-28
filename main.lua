@@ -10,9 +10,9 @@ grid = {{{200, 200},{400, 200},{600, 200}},
         {{200, 400},{400, 400},{600, 400}},
         {{200, 600},{400, 600},{600, 600}}}
 
-obj = {{{'t','p'},{'c','y'},{'t','y'}},
-       {{'c','p'},{'t','p'},{'c','p'}},
-       {{'t','y'},{'t','y'},{'t','y'}}}
+obj = {{{true,true},{false,false},{true,false}},
+       {{false,true},{true,true},{false,true}},
+       {{true,false},{true,false},{true,false}}}
 
 d_pos = {{0, 0, 0,},
          {0, 0, 0,},
@@ -29,6 +29,21 @@ swap_time = 2.0
 jump_time = 0.5
 dark = false
 selected = false
+
+function generate_obj()
+    for _, y in pairs(obj) do
+        for _, x in pairs(y) do
+            for i, _ in pairs(x) do
+                if love.math.random() > 0.5 then
+                    x[i] = true
+                else
+                    x[i] = false
+                end
+            end
+        end
+    end
+
+end
 
 function copy_values(table)
     new_table = {}
@@ -61,6 +76,7 @@ function love.load()
     music:setLooping(true)
     music:play()
     selector = love.graphics.newImage("selector.png")
+    generate_obj()
 end
 
 function love.update()
@@ -139,7 +155,7 @@ function love.draw()
 
     for ix=1, 3 do
         for iy=1, 3 do
-            if obj[iy][ix][2] == 'p' then
+            if obj[iy][ix][2] == true then
                 love.graphics.setColor(PURP)
             else
                 love.graphics.setColor(YELLO)
@@ -147,7 +163,7 @@ function love.draw()
             pos = grid[iy][ix]
             x = pos[1]
             y = pos[2] + d_pos[iy][ix] * D_POS_PIXELS
-            if obj[iy][ix][1] == 't' then
+            if obj[iy][ix][1] == true then
                 love.graphics.polygon("fill", x-50, y+50, x+20, y-50, x+50, y+50)
             else
                 love.graphics.circle("fill", x, y, 50, 500)

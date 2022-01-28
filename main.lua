@@ -16,6 +16,8 @@ d_pos = {{0, 0, 0,},
          {0, 0, 0,},
          {0, 0, 0,}}
 
+selector_pos = {1,1}
+
 MOVE_P = 0.4
 D_POS_PIXELS = 20
 MOVE_P_DIR_STEP = 0.25  -- 0.5, 0.75, 1.0, so max 2 steps in any direction
@@ -28,6 +30,10 @@ state = {
 
 function love.load()
     success = love.window.setMode(800, 800)
+    music = love.audio.newSource("sound/boopy-song.wav", "stream")
+    music:setLooping(true)
+    music:play()
+    selector = love.graphics.newImage("selector.png")
 end
 
 function love.update()
@@ -80,4 +86,14 @@ function love.draw()
             end
         end
     end
+
+    x = grid[selector_pos[1]][selector_pos[2]][1]
+    y = grid[selector_pos[1]][selector_pos[2]][2]
+
+    if state.dark then
+        love.graphics.setColor(LIGHT_BG)
+    else
+        love.graphics.setColor(DARK_BG)
+    end
+    love.graphics.draw(selector, x-65, y-65)
 end

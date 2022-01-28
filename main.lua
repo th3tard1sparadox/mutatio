@@ -4,6 +4,8 @@ DARK_BG = {0.03, 0.08, 0.16, 1}
 PURP = {0.61, 0.25, 0.8, 1}
 YELLO = {1, 1, 0.31, 1}
 
+GREN = {0.52, 0.92, 0.49, 1}
+
 grid = {{{200, 200},{400, 200},{600, 200}},
         {{200, 400},{400, 400},{600, 400}},
         {{200, 600},{400, 600},{600, 600}}}
@@ -26,6 +28,7 @@ state = {
     swap_time = 2.0,
     jump_time = 0.5,
     dark = false,
+    selected = true,
 }
 
 function love.load()
@@ -62,6 +65,21 @@ function love.update()
     end
 end
 
+function love.keypressed(key)
+    if key == "right" then
+        selector_pos[1] = ((selector_pos[1]) % 3) + 1
+    elseif key == "left" then
+        selector_pos[1] = ((selector_pos[1] - 2) % 3) + 1
+    elseif key == "up" then
+        selector_pos[2] = ((selector_pos[2] - 2) % 3) + 1
+    elseif key == "down" then
+        selector_pos[2] = ((selector_pos[2]) % 3) + 1
+    elseif key == "return" then
+        selected = not selected
+    end
+
+end
+
 function love.draw()
     if state.dark then
         love.graphics.clear(DARK_BG)
@@ -87,13 +105,17 @@ function love.draw()
         end
     end
 
-    x = grid[selector_pos[1]][selector_pos[2]][1]
-    y = grid[selector_pos[1]][selector_pos[2]][2]
+    x = grid[selector_pos[2]][selector_pos[1]][1]
+    y = grid[selector_pos[2]][selector_pos[1]][2]
 
     if state.dark then
         love.graphics.setColor(LIGHT_BG)
     else
         love.graphics.setColor(DARK_BG)
+    end
+
+    if selected then
+        love.graphics.setColor(GREN)
     end
     love.graphics.draw(selector, x-65, y-65)
 end

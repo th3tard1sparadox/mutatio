@@ -30,6 +30,31 @@ jump_time = 0.5
 dark = false
 selected = false
 
+function copy_values(table)
+    new_table = {}
+    for k,v in pairs(table) do
+        new_table[k] = v
+    end
+    return new_table
+end
+
+-- all k, v in a is in b as well
+-- a <= b when seen as sets
+function is_subtable(a, b)
+    for k,v in pairs(a) do
+        if v ~= b[k] then
+            return false
+        end
+    end
+    return true
+end
+
+-- a and b contains only the same k, v
+-- a == b when seen as sets
+function equal_tables(a, b)
+    return is_subtable(a, b) and is_subtable(b, a)
+end
+
 function love.load()
     success = love.window.setMode(800, 800)
     music = love.audio.newSource("sound/boopy-song.wav", "stream")
@@ -66,6 +91,9 @@ end
 
 function love.keypressed(key)
     -- if selected, only allow moves if the other dimension hasn't changed
+    -- TODO flash red on invalid movement
+    -- TODO ghost on selector_start_pos
+    prev_pos = copy_values(selector_pos)
     if key == "right" then
         if not selected or (selected and selector_start_pos[2] == selector_pos[2]) then
             selector_pos[1] = ((selector_pos[1]) % 3) + 1
@@ -85,11 +113,17 @@ function love.keypressed(key)
     elseif key == "return" then
         if not selected then
             selected = true
-            selector_start_pos = { selector_pos[1], selector_pos[2] }
+            selector_start_pos = copy_values(selector_pos)
         else
             selected = false
             selector_start_pos = nil
         end
+    end
+
+    if selected and not equal_tables(prev_pos, selector_pos) then
+        to_swap = obj[prev_pos[2]][prev_pos[1]]
+        obj[prev_pos[2]][prev_pos[1]] = obj[selector_pos[2]][selector_pos[1]]
+        obj[selector_pos[2]][selector_pos[1]] = to_swap
     end
 end
 

@@ -116,6 +116,9 @@ function love.keypressed(key)
             selector_start_pos = copy_values(selector_pos)
         else
             selected = false
+            if not equal_tables(selector_start_pos, selector_pos) then
+                -- TODO do something for all shapes between
+            end
             selector_start_pos = nil
         end
     end

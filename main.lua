@@ -112,19 +112,27 @@ function love.keypressed(key)
     prev_pos = copy_values(selector_pos)
     if key == "right" then
         if not selected or (selected and selector_start_pos[2] == selector_pos[2]) then
-            selector_pos[1] = ((selector_pos[1]) % 3) + 1
+            if selector_pos[1] < 3 then
+                selector_pos[1] = selector_pos[1] + 1
+            end
         end
     elseif key == "left" then
         if not selected or (selected and selector_start_pos[2] == selector_pos[2]) then
-            selector_pos[1] = ((selector_pos[1] - 2) % 3) + 1
+            if selector_pos[1] > 1 then
+                selector_pos[1] = selector_pos[1] - 1
+            end
         end
     elseif key == "up" then
         if not selected or (selected and selector_start_pos[1] == selector_pos[1]) then
-            selector_pos[2] = ((selector_pos[2] - 2) % 3) + 1
+            if selector_pos[2] > 1 then
+                selector_pos[2] = selector_pos[2] - 1
+            end
         end
     elseif key == "down" then
         if not selected or (selected and selector_start_pos[1] == selector_pos[1]) then
-            selector_pos[2] = ((selector_pos[2]) % 3) + 1
+            if selector_pos[2] < 3 then
+                selector_pos[2] = selector_pos[2] + 1
+            end
         end
     elseif key == "return" then
         if not selected then

@@ -12,6 +12,13 @@ obj = {{{'t','p'},{'c','y'},{'t','y'}},
        {{'c','p'},{'t','p'},{'c','p'}},
        {{'t','y'},{'t','y'},{'t','y'}}}
 
+d_pos = {{0, 0, 0,},
+         {0, 0, 0,},
+         {0, 0, 0,}}
+
+MOVE_P = 0.75
+D_POS_PIXELS = 20
+
 state = {
     swap_time = 2.0,
     jmp_time = 0.5,
@@ -37,18 +44,20 @@ function love.draw()
         love.graphics.clear(LIGHT_BG)
     end
 
-    for x=1, 3 do
-        for y=1, 3 do
-            pos = grid[y][x]
-            if obj[y][x][2] == 'p' then
+    for ix=1, 3 do
+        for iy=1, 3 do
+            if obj[iy][ix][2] == 'p' then
                 love.graphics.setColor(PURP)
             else
                 love.graphics.setColor(YELLO)
             end
-            if obj[y][x][1] == 't' then
-                love.graphics.polygon("fill", pos[1]-50,pos[2]+50, pos[1]+20,pos[2]-50, pos[1]+50,pos[2]+50)
+            pos = grid[iy][ix]
+            x = pos[1]
+            y = pos[2]
+            if obj[iy][ix][1] == 't' then
+                love.graphics.polygon("fill", x-50, y+50, x+20, y-50, x+50, y+50)
             else
-                love.graphics.circle("fill", pos[1], pos[2], 50, 500)
+                love.graphics.circle("fill", x, y, 50, 500)
             end
         end
     end

@@ -26,12 +26,12 @@ function love.update()
     state.swap_time = state.swap_time - love.timer.getDelta()
     if state.swap_time < 0 then
         state.swap_time = 2.0
-        dark = not dark
+        state.dark = not state.dark
     end
 end
 
 function love.draw()
-    if dark then
+    if state.dark then
         love.graphics.clear(DARK_BG)
     else
         love.graphics.clear(LIGHT_BG)

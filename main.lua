@@ -19,6 +19,7 @@ d_pos = {{0, 0, 0,},
          {0, 0, 0,}}
 
 selector_pos = {1,1}
+selector_start_pos = nil
 
 MOVE_P = 0.4
 D_POS_PIXELS = 20
@@ -64,18 +65,32 @@ function love.update()
 end
 
 function love.keypressed(key)
+    -- if selected, only allow moves if the other dimension hasn't changed
     if key == "right" then
-        selector_pos[1] = ((selector_pos[1]) % 3) + 1
+        if not selected or (selected and selector_start_pos[2] == selector_pos[2]) then
+            selector_pos[1] = ((selector_pos[1]) % 3) + 1
+        end
     elseif key == "left" then
-        selector_pos[1] = ((selector_pos[1] - 2) % 3) + 1
+        if not selected or (selected and selector_start_pos[2] == selector_pos[2]) then
+            selector_pos[1] = ((selector_pos[1] - 2) % 3) + 1
+        end
     elseif key == "up" then
-        selector_pos[2] = ((selector_pos[2] - 2) % 3) + 1
+        if not selected or (selected and selector_start_pos[1] == selector_pos[1]) then
+            selector_pos[2] = ((selector_pos[2] - 2) % 3) + 1
+        end
     elseif key == "down" then
-        selector_pos[2] = ((selector_pos[2]) % 3) + 1
+        if not selected or (selected and selector_start_pos[1] == selector_pos[1]) then
+            selector_pos[2] = ((selector_pos[2]) % 3) + 1
+        end
     elseif key == "return" then
-        selected = not selected
+        if not selected then
+            selected = true
+            selector_start_pos = { selector_pos[1], selector_pos[2] }
+        else
+            selected = false
+            selector_start_pos = nil
+        end
     end
-
 end
 
 function love.draw()

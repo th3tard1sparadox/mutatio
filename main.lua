@@ -163,7 +163,7 @@ function love.draw()
 
     for ix=1, 3 do
         for iy=1, 3 do
-            if obj[iy][ix][2] == true then
+            if obj[iy][ix][2] == true and dark or obj[iy][ix][2] == false and not dark then
                 love.graphics.setColor(PURP)
             else
                 love.graphics.setColor(YELLO)

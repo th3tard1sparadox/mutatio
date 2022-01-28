@@ -24,12 +24,10 @@ MOVE_P = 0.4
 D_POS_PIXELS = 20
 MOVE_P_DIR_STEP = 0.25  -- 0.5, 0.75, 1.0, so max 2 steps in any direction
 
-state = {
-    swap_time = 2.0,
-    jump_time = 0.5,
-    dark = false,
-    selected = true,
-}
+swap_time = 2.0
+jump_time = 0.5
+dark = false
+selected = false
 
 function love.load()
     success = love.window.setMode(800, 800)
@@ -41,15 +39,15 @@ end
 
 function love.update()
     -- TODO timer table
-    state.swap_time = state.swap_time - love.timer.getDelta()
-    if state.swap_time < 0 then
-        state.swap_time = state.swap_time + 2.0
-        state.dark = not state.dark
+    swap_time = swap_time - love.timer.getDelta()
+    if swap_time < 0 then
+        swap_time = swap_time + 2.0
+        dark = not dark
     end
 
-    state.jump_time = state.jump_time - love.timer.getDelta()
-    if state.jump_time < 0 then
-        state.jump_time = state.jump_time + 0.5
+    jump_time = jump_time - love.timer.getDelta()
+    if jump_time < 0 then
+        jump_time = jump_time + 0.5
         for ix=1, 3 do
             for iy=1, 3 do
                 if love.math.random() < MOVE_P then
@@ -81,7 +79,7 @@ function love.keypressed(key)
 end
 
 function love.draw()
-    if state.dark then
+    if dark then
         love.graphics.clear(DARK_BG)
     else
         love.graphics.clear(LIGHT_BG)
@@ -108,7 +106,7 @@ function love.draw()
     x = grid[selector_pos[2]][selector_pos[1]][1]
     y = grid[selector_pos[2]][selector_pos[1]][2]
 
-    if state.dark then
+    if dark then
         love.graphics.setColor(LIGHT_BG)
     else
         love.graphics.setColor(DARK_BG)

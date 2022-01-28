@@ -16,12 +16,13 @@ d_pos = {{0, 0, 0,},
          {0, 0, 0,},
          {0, 0, 0,}}
 
-MOVE_P = 0.75
+MOVE_P = 0.4
 D_POS_PIXELS = 20
+MOVE_P_DIR_STEP = 0.25  -- 0.5, 0.75, 1.0, so max 2 steps in any direction
 
 state = {
     swap_time = 2.0,
-    jmp_time = 0.5,
+    jump_time = 0.5,
     dark = false,
 }
 
@@ -30,10 +31,28 @@ function love.load()
 end
 
 function love.update()
+    -- TODO timer table
     state.swap_time = state.swap_time - love.timer.getDelta()
     if state.swap_time < 0 then
-        state.swap_time = 2.0
+        state.swap_time = state.swap_time + 2.0
         state.dark = not state.dark
+    end
+
+    state.jump_time = state.jump_time - love.timer.getDelta()
+    if state.jump_time < 0 then
+        state.jump_time = state.jump_time + 0.5
+        for ix=1, 3 do
+            for iy=1, 3 do
+                if love.math.random() < MOVE_P then
+                    move_up = love.math.random() < 0.5 + MOVE_P_DIR_STEP * d_pos[iy][ix]
+                    if move_up then
+                        d_pos[iy][ix] = d_pos[iy][ix] - 1
+                    else
+                        d_pos[iy][ix] = d_pos[iy][ix] + 1
+                    end
+                end
+            end
+        end
     end
 end
 
@@ -53,7 +72,7 @@ function love.draw()
             end
             pos = grid[iy][ix]
             x = pos[1]
-            y = pos[2]
+            y = pos[2] + d_pos[iy][ix] * D_POS_PIXELS
             if obj[iy][ix][1] == 't' then
                 love.graphics.polygon("fill", x-50, y+50, x+20, y-50, x+50, y+50)
             else

@@ -10,6 +10,7 @@ grid = {{{200, 200},{400, 200},{600, 200}},
         {{200, 400},{400, 400},{600, 400}},
         {{200, 600},{400, 600},{600, 600}}}
 
+-- true = triange
 obj = {{{true,true},{false,false},{true,false}},
        {{false,true},{true,true},{false,true}},
        {{true,false},{true,false},{true,false}}}
@@ -25,8 +26,8 @@ MOVE_P = 0.4
 D_POS_PIXELS = 20
 MOVE_P_DIR_STEP = 0.25  -- 0.5, 0.75, 1.0, so max 2 steps in any direction
 
-swap_time = 2.0
-jump_time = 0.5
+swap_time = 1.25
+jump_time = 0.625
 dark = false
 selected = false
 
@@ -75,6 +76,8 @@ function love.load()
     music = love.audio.newSource("sound/boopy-song.wav", "stream")
     music:setLooping(true)
     music:play()
+    jump_time = 0
+    swap_time = 0
     selector = love.graphics.newImage("selector.png")
     generate_obj()
 end
@@ -82,13 +85,13 @@ end
 function love.update()
     -- TODO timer table
     swap_time = swap_time - love.timer.getDelta()
-    if swap_time < 0 then
+    if swap_time <= 0 then
         swap_time = swap_time + 2.0
         dark = not dark
     end
 
     jump_time = jump_time - love.timer.getDelta()
-    if jump_time < 0 then
+    if jump_time <= 0 then
         jump_time = jump_time + 0.5
         for ix=1, 3 do
             for iy=1, 3 do
@@ -141,7 +144,35 @@ function love.keypressed(key)
         else
             selected = false
             if not equal_tables(selector_start_pos, selector_pos) then
-                -- TODO do something for all shapes between
+                if obj[selector_pos[2]][selector_pos[1]][1] then
+                    if selector_start_pos[1] == selector_pos[1] then -- y move
+                        for i = math.min(selector_start_pos[2], selector_pos[2]), math.max(selector_start_pos[2], selector_pos[2]) do
+                            if i ~= selector_pos[2] then
+                                obj[i][selector_pos[1]][2] = not obj[i][selector_pos[1]][2]
+                            end
+                        end
+                    else
+                        for i = math.min(selector_start_pos[1], selector_pos[1]), math.max(selector_start_pos[1], selector_pos[1]) do
+                            if i ~= selector_pos[1] then
+                                obj[selector_pos[2]][i][2] = not obj[selector_pos[2]][i][2]
+                            end
+                        end
+                    end
+                else
+                    if selector_start_pos[1] == selector_pos[1] then -- y move
+                        for i = math.min(selector_start_pos[2], selector_pos[2]), math.max(selector_start_pos[2], selector_pos[2]) do
+                            if i ~= selector_pos[2] then
+                                obj[i][selector_pos[1]][1] = not obj[i][selector_pos[1]][1]
+                            end
+                        end
+                    else
+                        for i = math.min(selector_start_pos[1], selector_pos[1]), math.max(selector_start_pos[1], selector_pos[1]) do
+                            if i ~= selector_pos[1] then
+                                obj[selector_pos[2]][i][1] = not obj[selector_pos[2]][i][1]
+                            end
+                        end
+                    end
+                end
             end
             selector_start_pos = nil
         end

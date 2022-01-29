@@ -5,6 +5,7 @@ PURP = {0.61, 0.25, 0.8, 1}
 YELLO = {1, 1, 0.31, 1}
 
 GREN = {0.52, 0.92, 0.49, 1}
+GREN_CL = {0.52, 0.92, 0.49, 0.25}
 
 grid = {{{200, 200},{400, 200},{600, 200}},
         {{200, 400},{400, 400},{600, 400}},
@@ -33,6 +34,7 @@ jump_time = 0.625
 dark = false
 selected = false
 moves = 0
+highscore = 1e309
 
 function generate_obj()
     for _, y in pairs(obj) do
@@ -95,6 +97,9 @@ function win_cond()
 end
 
 function love.load()
+    font = love.graphics.newFont("Roboto/Roboto-Medium.ttf", 40)
+    font:setFilter("nearest", "nearest")
+    love.graphics.setFont(font)
     bloop1 = love.audio.newSource("sound/bloop1.wav", "static")
     table.insert(bloops, bloop1)
     bloop2 = love.audio.newSource("sound/bloop2.wav", "static")
@@ -178,6 +183,8 @@ function love.keypressed(key)
             selected = false
             if not equal_tables(selector_start_pos, selector_pos) then
                 moves = moves + 1
+                sound = math.ceil(5 * love.math.random())
+                love.audio.play(bloops[sound])
                 if obj[selector_pos[2]][selector_pos[1]][1] then
                     if selector_start_pos[1] == selector_pos[1] then -- y move
                         for i = math.min(selector_start_pos[2], selector_pos[2]), math.max(selector_start_pos[2], selector_pos[2]) do
@@ -208,9 +215,10 @@ function love.keypressed(key)
                     end
                 end
             end
-            sound = math.ceil(5 * love.math.random())
-            love.audio.play(bloops[sound])
             if win_cond() then
+                if moves < highscore then
+                    highscore = moves
+                end
                 reset()
             end
             selector_start_pos = nil
@@ -262,4 +270,24 @@ function love.draw()
         love.graphics.setColor(GREN)
     end
     love.graphics.draw(selector, x-65, y-65)
+
+    if selected then
+        xs = grid[selector_start_pos[2]][selector_start_pos[1]][1]
+        ys = grid[selector_start_pos[2]][selector_start_pos[1]][2]
+        love.graphics.setColor(GREN_CL)
+        love.graphics.draw(selector, xs-65, ys-65)
+    end
+
+    if dark then
+        love.graphics.setColor(LIGHT_BG)
+    else
+        love.graphics.setColor(DARK_BG)
+    end
+    love.graphics.print("moves: "..moves, 30, 20)
+    if highscore ~= 1e309 then
+        text = "best score: "..highscore
+    else
+        text = "best score: -"
+    end
+    love.graphics.print(text, 800-30-font:getWidth(text),800-20-font:getHeight(text))
 end

@@ -32,6 +32,7 @@ swap_time = 1.25
 jump_time = 0.625
 dark = false
 selected = false
+moves = 0
 
 function generate_obj()
     for _, y in pairs(obj) do
@@ -73,6 +74,26 @@ function equal_tables(a, b)
     return is_subtable(a, b) and is_subtable(b, a)
 end
 
+function reset()
+    generate_obj()
+    moves = 0
+end
+
+function win_cond()
+    obj_val = obj[1][1][1]
+    col_val = obj[1][1][2]
+
+    for _, y in pairs(obj) do
+        for _, x in pairs(y) do
+            if x[1] ~= obj_val or x[2] ~= col_val then
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
 function love.load()
     bloop1 = love.audio.newSource("sound/bloop1.wav", "static")
     table.insert(bloops, bloop1)
@@ -91,7 +112,7 @@ function love.load()
     jump_time = 0
     swap_time = 0
     selector = love.graphics.newImage("selector.png")
-    generate_obj()
+    reset()
 end
 
 function love.update()
@@ -156,6 +177,7 @@ function love.keypressed(key)
         else
             selected = false
             if not equal_tables(selector_start_pos, selector_pos) then
+                moves = moves + 1
                 if obj[selector_pos[2]][selector_pos[1]][1] then
                     if selector_start_pos[1] == selector_pos[1] then -- y move
                         for i = math.min(selector_start_pos[2], selector_pos[2]), math.max(selector_start_pos[2], selector_pos[2]) do
@@ -188,6 +210,9 @@ function love.keypressed(key)
             end
             sound = math.ceil(5 * love.math.random())
             love.audio.play(bloops[sound])
+            if win_cond() then
+                reset()
+            end
             selector_start_pos = nil
         end
     end

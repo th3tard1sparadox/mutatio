@@ -22,6 +22,8 @@ d_pos = {{0, 0, 0,},
 selector_pos = {1,1}
 selector_start_pos = nil
 
+bloops = {}
+
 MOVE_P = 0.4
 D_POS_PIXELS = 20
 MOVE_P_DIR_STEP = 0.25  -- 0.5, 0.75, 1.0, so max 2 steps in any direction
@@ -72,6 +74,16 @@ function equal_tables(a, b)
 end
 
 function love.load()
+    bloop1 = love.audio.newSource("sound/bloop1.wav", "static")
+    table.insert(bloops, bloop1)
+    bloop2 = love.audio.newSource("sound/bloop2.wav", "static")
+    table.insert(bloops, bloop2)
+    bloop3 = love.audio.newSource("sound/bloop3.wav", "static")
+    table.insert(bloops, bloop3)
+    bloop4 = love.audio.newSource("sound/bloop4.wav", "static")
+    table.insert(bloops, bloop4)
+    bloop5 = love.audio.newSource("sound/bloop5.wav", "static")
+    table.insert(bloops, bloop5)
     success = love.window.setMode(800, 800)
     music = love.audio.newSource("sound/boopy-song.wav", "stream")
     music:setLooping(true)
@@ -174,6 +186,8 @@ function love.keypressed(key)
                     end
                 end
             end
+            sound = math.ceil(5 * love.math.random())
+            love.audio.play(bloops[sound])
             selector_start_pos = nil
         end
     end
